@@ -17,6 +17,7 @@ import smbus
 from .common import FuryCtlError, RAMSlot
 from .common import FURY_BASE_RGB_ADDR_DDR4
 from .controller import FuryDRAMController, FuryDRAMDetector
+from setproctitle import setproctitle
 
 DEFAULT_COLOR = "#ffffff"
 DEFAULT_BRIGHTNESS = 30
@@ -28,7 +29,7 @@ DBUS_LOGIND_SERVICE = "org.freedesktop.login1"
 DBUS_LOGIND_PATH = "/org/freedesktop/login1"
 DBUS_LOGIND_MANAGER_INTERFACE = "org.freedesktop.login1.Manager"
 
-# logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -63,7 +64,7 @@ def udev_detect():
             index = hex_addr - BASE_SPD_ADDR
             rgb_addr = index + FURY_BASE_RGB_ADDR_DDR4
 
-            print(f"Found Kingston SDRAM on smbus {bus_num} with index={index}")
+            logger.info(f"Found Kingston SDRAM on smbus {bus_num} with index={index}")
 
             ram_slots.append(RAMSlot(rgb_addr))
 
@@ -84,7 +85,7 @@ def check_fury(bus: smbus.SMBus, ram_slots: List[RAMSlot]) -> List[RAMSlot]:
         if not detector.check_fury_signature_on_slot(slot):
             continue
 
-        print(f"Found Valid Kingston Fury RGB SDRAM signature")
+        logger.info(f"Found Valid Kingston Fury RGB SDRAM signature")
         actual_rgb_slot.append(slot)
 
     if len(actual_rgb_slot) == 0:
@@ -114,6 +115,7 @@ def signal_handler(sig, frame):
 
 
 def main():
+    setproctitle("furyctl")
     arguments = parse_arguments()
 
     logging.basicConfig(
