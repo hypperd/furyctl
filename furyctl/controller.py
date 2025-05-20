@@ -18,11 +18,29 @@ class FurySMBus:
         self.__bus = bus
 
     def smbus_write_byte_data(self, addr: int, reg: int, value: int) -> None:
-        self.__bus.write_byte_data(addr, reg, value)
-        logger.debug(
-            f"Write byte data from register {reg:x} of {addr:x} with value={value:x}"
-        )
-        sleep(FURY_DELAY)
+        for retry in range(3):
+            success: bool;
+
+            try:
+                self.__bus.write_byte_data(addr, reg, value)
+                logger.debug(
+                    f"Write byte data from register {reg:x} of {addr:x} with value={value:x}"
+                )
+                success = True
+            except IOError as ex:
+                if retry == 2:
+                    raise ex
+
+                logger.debug(
+                    f"Write byte data from register {reg:x} of {addr:x} with value={value:x} failed. retrying..."
+                )
+
+                success = False;
+
+            sleep((retry + 1) * FURY_DELAY)
+
+            if success:
+                break;
 
     def smbus_read_word_data(self, addr: int, reg: int) -> int:
         res = self.__bus.read_word_data(addr, reg)
