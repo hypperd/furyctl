@@ -1,18 +1,18 @@
 from enum import IntEnum
 from dataclasses import dataclass
 
-FURY_BASE_RGB_ADDR_DDR4 = 0x58
 FURY_MAX_NUM_SLOTS = 4
+FURY_BASE_RGB_ADDR_DDR4 = 0x58
 
 
 class FuryReg(IntEnum):
-    FURY_REG_MODEL = 0x06
-    FURY_REG_APPLY = 0x08
-    FURY_REG_MODE = 0x09
-    FURY_REG_INDEX = 0x0B
-    FURY_REG_DIRECTION = 0x0C
-    FURY_REG_DELAY = 0x0D
-    FURY_REG_SPEED = 0x0E
+    MODEL = 0x06
+    APPLY = 0x08
+    MODE = 0x09
+    INDEX = 0x0B
+    DIRECTION = 0x0C
+    DELAY = 0x0D
+    SPEED = 0x0E
     FURY_REG_DYNAMIC_HOLD_A = 0x12
     FURY_REG_DYNAMIC_HOLD_B = 0x13
     FURY_REG_DYNAMIC_FADE_A = 0x14
@@ -25,33 +25,33 @@ class FuryReg(IntEnum):
     FURY_REG_BREATH_MAX_BRIGHTNESS = 0x1B
     FURY_REG_BREATH_MID_BRIGHTNESS = 0x1C
     FURY_REG_BREATH_MIN_BRIGHTNESS = 0x1D
-    FURY_REG_BRIGHTNESS = 0x20
+    BRIGHTNESS = 0x20
     FURY_REG_BG_RED = 0x23
     FURY_REG_BG_GREEN = 0x24
     FURY_REG_BG_BLUE = 0x25
     FURY_REG_LENGTH = 0x26
-    FURY_REG_NUM_SLOTS = 0x27
+    NUM_SLOTS = 0x27
     FURY_REG_NUM_COLORS = 0x30
-    FURY_REG_MODE_BASE_RED = 0x31
-    FURY_REG_MODE_BASE_GREEN = 0x32
-    FURY_REG_MODE_BASE_BLUE = 0x33
+    MODE_BASE_RED = 0x31
+    MODE_BASE_GREEN = 0x32
+    MODE_BASE_BLUE = 0x33
     FURY_REG_BASE_RED = 0x50
     FURY_REG_BASE_GREEN = 0x51
     FURY_REG_BASE_BLUE = 0x52
 
 
-class FuryTransaction(IntEnum):
-    FURY_BEGIN_TRNSFER = 0x53
-    FURY_END_TRNSFER = 0x44
+class FuryTransfer(IntEnum):
+    BEGIN = 0x53
+    END = 0x44
 
 
 class FuryDirection(IntEnum):
-    FURY_DIR_BOTTOM_TO_TOP = 0x01
-    FURY_DIR_TOP_TO_BOTTOM = 0x02
+    BOTTOM_TO_TOP = 0x01
+    TOP_TO_BOTTOM = 0x02
 
 
 class FuryMode(IntEnum):
-    FURY_MODE_STATIC = 0x00
+    STATIC = 0x00
     FURY_MODE_RAINBOW = 0x001
     FURY_MODE_SPECTRUM = 0x101
     FURY_MODE_RHYTHM = 0x02
@@ -75,8 +75,15 @@ class FuryMode(IntEnum):
 
 
 @dataclass
-class RAMSlot:
+class RAMStick:
+    index: int
     rgb_addr: int
+
+
+@dataclass()
+class SMBusConfig:
+    bus_num: int
+    ram_slots: list[RAMStick]
 
 
 class FuryCtlError(Exception):
