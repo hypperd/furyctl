@@ -6,7 +6,7 @@ import smbus
 from .common import RAMStick
 from .common import FURY_BASE_RGB_ADDR_DDR4, FURY_MAX_NUM_SLOTS
 
-FURY_DELAY = 0.02
+FURY_DELAY = 0.01
 FURY_RETRAY_NUM = 4
 
 logger = logging.getLogger(__name__)
