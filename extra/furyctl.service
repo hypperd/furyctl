@@ -1,0 +1,9 @@
+[Unit]
+Description=A Service to control Kingston Fury RGB DRAM
+
+[Service]
+Type=exec
+ExecStart=/usr/bin/furyctl -v
+
+[Install]
+WantedBy=multi-user.target
