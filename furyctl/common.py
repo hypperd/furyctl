@@ -1,8 +1,21 @@
 from enum import IntEnum
-from dataclasses import dataclass
 
 FURY_MAX_NUM_SLOTS = 4
 FURY_BASE_RGB_ADDR_DDR4 = 0x58
+
+
+class FuryTransfer(IntEnum):
+    END = 0x44
+    BEGIN = 0x53
+
+
+class FuryDirection(IntEnum):
+    BOTTOM_TO_TOP = 0x01
+    TOP_TO_BOTTOM = 0x02
+
+
+class FuryMode(IntEnum):
+    STATIC = 0x00
 
 
 class FuryReg(IntEnum):
@@ -13,78 +26,8 @@ class FuryReg(IntEnum):
     DIRECTION = 0x0C
     DELAY = 0x0D
     SPEED = 0x0E
-    FURY_REG_DYNAMIC_HOLD_A = 0x12
-    FURY_REG_DYNAMIC_HOLD_B = 0x13
-    FURY_REG_DYNAMIC_FADE_A = 0x14
-    FURY_REG_DYNAMIC_FADE_B = 0x15
-    FURY_REG_BREATH_MIN_TO_MID = 0x16
-    FURY_REG_BREATH_MID_TO_MAX = 0x17
-    FURY_REG_BREATH_MAX_TO_MID = 0x18
-    FURY_REG_BREATH_MID_TO_MIN = 0x19
-    FURY_REG_BREATH_MIN_HOLD = 0x1A
-    FURY_REG_BREATH_MAX_BRIGHTNESS = 0x1B
-    FURY_REG_BREATH_MID_BRIGHTNESS = 0x1C
-    FURY_REG_BREATH_MIN_BRIGHTNESS = 0x1D
     BRIGHTNESS = 0x20
-    FURY_REG_BG_RED = 0x23
-    FURY_REG_BG_GREEN = 0x24
-    FURY_REG_BG_BLUE = 0x25
-    FURY_REG_LENGTH = 0x26
     NUM_SLOTS = 0x27
-    FURY_REG_NUM_COLORS = 0x30
     MODE_BASE_RED = 0x31
     MODE_BASE_GREEN = 0x32
     MODE_BASE_BLUE = 0x33
-    FURY_REG_BASE_RED = 0x50
-    FURY_REG_BASE_GREEN = 0x51
-    FURY_REG_BASE_BLUE = 0x52
-
-
-class FuryTransfer(IntEnum):
-    BEGIN = 0x53
-    END = 0x44
-
-
-class FuryDirection(IntEnum):
-    BOTTOM_TO_TOP = 0x01
-    TOP_TO_BOTTOM = 0x02
-
-
-class FuryMode(IntEnum):
-    STATIC = 0x00
-    FURY_MODE_RAINBOW = 0x001
-    FURY_MODE_SPECTRUM = 0x101
-    FURY_MODE_RHYTHM = 0x02
-    FURY_MODE_BREATH = 0x03
-    FURY_MODE_DYNAMIC = 0x04
-    FURY_MODE_SLIDE = 0x005
-    FURY_MODE_SLITHER = 0x105
-    FURY_MODE_TELEPORT = 0x205
-    FURY_MODE_WIND = 0x305
-    FURY_MODE_COMET = 0x006
-    FURY_MODE_RAIN = 0x106
-    FURY_MODE_FIREWORK = 0x206
-    FURY_MODE_VOLTAGE = 0x07
-    FURY_MODE_COUNTDOWN = 0x08
-    FURY_MODE_FLAME = 0x09
-    FURY_MODE_TWILIGHT = 0x0A
-    FURY_MODE_FURY = 0x0B
-    FURY_MODE_DIRECT = 0x10
-    FURY_MODE_PRISM = 0x11
-    FURY_MODE_BREATH_DIRECT = 0x13
-
-
-@dataclass
-class RAMStick:
-    index: int
-    rgb_addr: int
-
-
-@dataclass()
-class SMBusConfig:
-    bus_num: int
-    ram_slots: list[RAMStick]
-
-
-class FuryCtlError(Exception):
-    pass

@@ -1,11 +1,13 @@
 import argparse
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 import logging
-import signal
+from signal import SIGINT, SIGTERM
 import sys
 
 from setproctitle import setproctitle
 
-from .manager import FuryManager
+from .manager import RGBManager
 
 logger = logging.getLogger(__name__)
 
@@ -16,23 +18,35 @@ def parse_arguments() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def signal_handler(sig, frame):
-    sys.stdout.write("\n")
-    sys.stdout.flush()
-    sys.exit(0)
+async def start(finalize_event: asyncio.Event):
+    manager = await RGBManager.connect(finalize_event)
+    await manager.wait()
+
 
 def main():
     setproctitle("furyctl")
     arguments = parse_arguments()
 
     logging.basicConfig(
-        level=max((3 - arguments.verbose) * 10, 0),
+        level=max((3 - arguments.verbose) * 10, 0),  # pyright: ignore[reportAny]
         format="%(levelname)s: %(message)s",
     )
 
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
-    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+    error = False
+    loop = asyncio.new_event_loop()
+    finalize_event = asyncio.Event()
+    loop.set_default_executor(ThreadPoolExecutor(max_workers=1))
 
-    manager = FuryManager()
-    manager.run()
+    loop.add_signal_handler(SIGINT, lambda: finalize_event.set())
+    loop.add_signal_handler(SIGTERM, lambda: finalize_event.set())
+
+    try:
+        loop.run_until_complete(start(finalize_event))
+    except Exception as ex:
+        logger.exception(ex)
+        error = True
+    finally:
+        loop.close()
+
+    if error:
+        sys.exit(1)
